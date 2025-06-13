@@ -1,0 +1,26 @@
+{
+  "name": "data-state",
+  "private": false,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "dist/index.umd.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "vite",
+    "build:all": "npm run build && npm run build:docs",
+    "build": "vite build --config vite.npm.config.ts",
+    "build:docs": "vite build --config vite.config.ts",
+    "preview": "vite preview",
+    "release": "node scripts/release.js",
+    "release:minor": "node scripts/release.js minor",
+    "release:major": "node scripts/release.js major"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.17",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5",
+    "vite-plugin-dts": "^4.5.3"
+  },
+  "dependencies": {}
+}

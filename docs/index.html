@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/data-state/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>传感器设备监控系统</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        font-weight: 700;
+      }
+
+      .header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+      }
+
+      .content {
+        padding: 30px;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+
+      .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+      }
+
+      .btn-secondary {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+      }
+
+      .btn-danger {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+      }
+
+      .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none !important;
+        box-shadow: none !important;
+      }
+
+      .status-panel {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .status-card {
+        background: #f8fafc;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .status-card h3 {
+        color: #1e293b;
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+      }
+
+      .status-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #4f46e5;
+      }
+
+      .config-panel {
+        background: #f1f5f9;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
+      }
+
+      .config-row {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+
+      .config-row label {
+        min-width: 120px;
+        font-weight: 600;
+        color: #374151;
+      }
+
+      .config-row input {
+        flex: 1;
+        padding: 8px 12px;
+        border: 2px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 1rem;
+      }
+
+      .config-row input:focus {
+        outline: none;
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+      }
+
+      /* 设备网格样式 */
+      .devices-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 8px;
+        margin-bottom: 30px;
+        max-height: 600px;
+        overflow-y: auto;
+        padding: 20px;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 2px solid #e2e8f0;
+      }
+
+      .device-cell {
+        aspect-ratio: 1;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-size: 0.7rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        background: white;
+      }
+
+      .device-cell:hover {
+        transform: scale(1.05);
+        z-index: 10;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      }
+
+      .device-cell.online {
+        border-color: #10b981;
+        background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+      }
+
+      .device-cell.offline {
+        border-color: #ef4444;
+        background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+      }
+
+      .device-cell.warning {
+        border-color: #f59e0b;
+        background: linear-gradient(135deg, #fffbeb 0%, #fed7aa 100%);
+        animation: pulse 2s infinite;
+      }
+
+      .device-cell.critical {
+        border-color: #dc2626;
+        background: linear-gradient(135deg, #fef2f2 0%, #fca5a5 100%);
+        animation: pulse 1s infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+      }
+
+      .device-id {
+        font-weight: 600;
+        color: #374151;
+        font-size: 0.65rem;
+        margin-bottom: 2px;
+      }
+
+      .device-status {
+        font-size: 0.6rem;
+        margin-bottom: 4px;
+      }
+
+      .device-values {
+        font-size: 0.55rem;
+        line-height: 1.2;
+        color: #64748b;
+      }
+
+      .status-icon {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        font-size: 0.8rem;
+      }
+
+      /* 详细信息面板 */
+      .details-panel {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-top: 30px;
+      }
+
+      .data-section {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 20px;
+      }
+
+      .data-section h3 {
+        color: #1e293b;
+        margin-bottom: 15px;
+        font-size: 1.3rem;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 10px;
+      }
+
+      .data-list {
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        background: white;
+      }
+
+      .data-item {
+        padding: 12px;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 0.85rem;
+        animation: slideIn 0.3s ease;
+      }
+
+      .data-item:last-child {
+        border-bottom: none;
+      }
+
+      .data-item.new {
+        background: #ecfdf5;
+        border-left: 4px solid #10b981;
+      }
+
+      .sensor-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+        font-weight: 600;
+        font-size: 0.8rem;
+      }
+
+      .alert-icon {
+        font-size: 1rem;
+      }
+
+      .sensor-location {
+        color: #64748b;
+        font-size: 0.75rem;
+        margin-bottom: 8px;
+      }
+
+      .sensor-data {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        font-size: 0.75rem;
+      }
+
+      .data-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .alert-value {
+        color: #ef4444;
+        font-weight: 600;
+      }
+
+      .timestamp {
+        text-align: right;
+        color: #64748b;
+        font-size: 0.7rem;
+        margin-top: 6px;
+        font-family: 'Courier New', monospace;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      /* 图例 */
+      .legend {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #f1f5f9;
+        border-radius: 8px;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      .legend-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        border: 2px solid;
+      }
+
+      .legend-online {
+        background: #ecfdf5;
+        border-color: #10b981;
+      }
+
+      .legend-offline {
+        background: #fef2f2;
+        border-color: #ef4444;
+      }
+
+      .legend-warning {
+        background: #fffbeb;
+        border-color: #f59e0b;
+      }
+
+      .legend-critical {
+        background: #fef2f2;
+        border-color: #dc2626;
+      }
+
+      @media (max-width: 768px) {
+        .devices-grid {
+          grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+          gap: 4px;
+        }
+        
+        .device-cell {
+          font-size: 0.6rem;
+          padding: 4px;
+        }
+        
+        .details-panel {
+          grid-template-columns: 1fr;
+        }
+        
+        .controls {
+          grid-template-columns: 1fr;
+        }
+        
+        .status-panel {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .legend {
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+      }
+    </style>
+    <script type="module" crossorigin src="/data-state/assets/index-CFVJVvJ7.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🌡️ 传感器设备监控系统</h1>
+        <p>实时监控500个温湿度灰尘传感器设备状态</p>
+      </div>
+      
+      <div class="content">
+        <!-- 配置面板 -->
+        <div class="config-panel">
+          <h3 style="margin-bottom: 15px; color: #1e293b;">⚙️ 配置</h3>
+          <div class="config-row">
+            <label>数据间隔 (ms):</label>
+            <input type="number" id="interval" value="1000" min="500" max="10000">
+          </div>
+          <div class="config-row">
+            <label>间隔内变化次数:</label>
+            <input type="number" id="maxItems" value="100" min="1" max="1000">
+          </div>
+        </div>
+
+        <!-- 控制按钮 -->
+        <div class="controls">
+          <button class="btn btn-primary" id="connectBtn">🔌 连接传感器</button>
+          <button class="btn btn-secondary" id="generateBtn" disabled>📊 生成数据</button>
+          <button class="btn btn-secondary" id="pauseBtn" disabled>⏸️ 暂停</button>
+          <button class="btn btn-secondary" id="resumeBtn" disabled>▶️ 恢复</button>
+          <button class="btn btn-danger" id="disconnectBtn" disabled>🔌 断开连接</button>
+          <button class="btn btn-danger" id="clearBtn">🗑️ 清空数据</button>
+        </div>
+
+        <!-- 状态面板 -->
+        <div class="status-panel">
+          <div class="status-card">
+            <h3>📡 连接状态</h3>
+            <div class="status-value" id="connectionStatus">未连接</div>
+          </div>
+          <div class="status-card">
+            <h3>📱 设备总数</h3>
+            <div class="status-value" id="totalCount">500</div>
+          </div>
+          <div class="status-card">
+            <h3>🟢 在线设备</h3>
+            <div class="status-value" id="onlineCount">0</div>
+          </div>
+          <div class="status-card">
+            <h3>⚠️ 告警数量</h3>
+            <div class="status-value" id="alertCount" style="color: #ef4444;">0</div>
+          </div>
+        </div>
+
+        <!-- 图例 -->
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-color legend-online"></div>
+            <span>正常在线</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color legend-warning"></div>
+            <span>告警</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color legend-critical"></div>
+            <span>严重告警</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color legend-offline"></div>
+            <span>离线</span>
+          </div>
+        </div>
+
+        <!-- 设备网格 -->
+        <div class="devices-grid" id="devicesGrid">
+          <!-- 设备格子将通过JavaScript动态生成 -->
+        </div>
+
+        <!-- 详细信息显示 -->
+        <div class="details-panel">
+          <div class="data-section">
+            <h3>📊 最新传感器数据</h3>
+            <div class="data-list" id="dataList">
+              <div style="padding: 20px; text-align: center; color: #64748b;">
+                暂无数据，请先连接适配器
+              </div>
+            </div>
+          </div>
+          
+          <div class="data-section">
+            <h3>🗃️ 设备状态统计</h3>
+            <div class="data-list" id="stateList">
+              <div style="padding: 20px; text-align: center; color: #64748b;">
+                暂无状态数据
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>

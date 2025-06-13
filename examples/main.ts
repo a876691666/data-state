@@ -56,7 +56,7 @@ function initializeDevices(): void {
     "前台",
   ];
 
-  for (let i = 1; i <= 100; i++) {
+  for (let i = 1; i <= 500; i++) {
     const deviceId = `SENSOR_${i.toString().padStart(3, "0")}`;
     const device: SensorDevice = {
       id: deviceId,

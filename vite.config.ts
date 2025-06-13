@@ -1,8 +1,7 @@
 import { defineConfig } from "vite";
-import packageJson from "./package.json";
 
 export default defineConfig({
-  base: `/${packageJson.name}`,
+  base: "/data-state",
   build: {
     outDir: "docs", // 输出目录设置为 docs
   },

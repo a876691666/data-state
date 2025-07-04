@@ -14,7 +14,14 @@
     "preview": "vite preview",
     "release": "node scripts/release.js",
     "release:minor": "node scripts/release.js minor",
-    "release:major": "node scripts/release.js major"
+    "release:major": "node scripts/release.js major",
+    "example:basic": "node --loader ts-node/esm examples/basic-usage.ts",
+    "example:advanced": "node --loader ts-node/esm examples/advanced-usage.ts",
+    "demo": "npm run example:basic",
+    "quick-start": "node scripts/quick-start.js",
+    "setup": "npm install && npm run build && echo '✅ 项目设置完成！运行 npm run demo 查看示例'",
+    "test": "echo '暂无测试，运行 npm run demo 查看功能演示'",
+    "help": "node scripts/help.js"
   },
   "devDependencies": {
     "@types/node": "^22.15.17",

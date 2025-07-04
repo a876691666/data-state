@@ -35,6 +35,15 @@ export {
   quickConnect 
 } from "./simpleWrapper";
 
+// 极简API - 只需要两个方法：监听id 和 停止监听id
+export {
+  UltraSimpleDataListener,
+  createDataListener,
+  getGlobalListener,
+  listen,
+  unlisten
+} from "./ultraSimple";
+
 // 导入用于工厂函数
 import { DataAdapterLayer } from "./dataAdapterLayer";
 import { Listener } from "./listener";

@@ -2,14 +2,72 @@
 
 一个强大且易用的 TypeScript 数据状态管理库，支持多种数据源适配器。
 
-## ⚡ 极速开始
+## ⚡ 极简使用 - 只需两个API
 
-### 方式一：一键设置（推荐）
+```typescript
+import { listen, unlisten } from 'tvt-data-state';
+
+// 监听数据
+listen('user-123', (data) => {
+  console.log('用户数据:', data);
+});
+
+// 停止监听  
+unlisten('user-123');
+```
+
+**就这么简单！** 🎉
+
+## 🎯 快速演示
 
 ```bash
-# 克隆项目后运行
-chmod +x scripts/setup.sh
-./scripts/setup.sh
+# 运行极简API演示
+npm run demo
+```
+
+## 💡 三种使用方式
+
+### 方式1: 全局函数（最简单）
+
+```typescript
+import { listen, unlisten } from 'tvt-data-state';
+
+// 监听用户数据
+listen('user-123', (data) => console.log('用户:', data));
+
+// 停止监听
+unlisten('user-123');
+```
+
+### 方式2: 创建实例（推荐）
+
+```typescript
+import { createDataListener } from 'tvt-data-state';
+
+const listener = createDataListener();
+listener.listen('order-456', (data) => console.log('订单:', data));
+listener.unlisten('order-456');
+```
+
+### 方式3: 混合使用
+
+```typescript
+import { listen, createDataListener } from 'tvt-data-state';
+
+// 全局监听通知
+listen('notification', (data) => console.log('🔔', data));
+
+// 业务数据监听器
+const business = createDataListener();
+business.listen('data', (data) => console.log('📊', data));
+```
+
+## 🛠️ 极速开始
+
+### 方式一：一键演示
+
+```bash
+npm run demo
 ```
 
 ### 方式二：手动设置
@@ -25,59 +83,53 @@ npm run setup
 python userinput.py
 ```
 
-## 🎯 快速演示
-
-```bash
-# 运行演示看效果
-npm run demo
-
-# 或使用交互式向导
-npm run quick-start
-```
-
-## 💡 简单使用
-
-```typescript
-import { quickConnect } from 'tvt-data-state';
-
-// 一行代码连接并使用
-const data = await quickConnect('mock://demo');
-data.onData(console.log);
-```
-
 ## 🛠️ 常用命令
 
 | 命令 | 功能 | 适合场景 |
 |------|------|----------|
-| `npm run demo` | 快速演示 | 第一次使用 |
-| `npm run quick-start` | 交互式向导 | 选择功能 |
+| `npm run demo` | 极简API演示 | 第一次使用 |
+| `npm run example:ultra` | 详细极简示例 | 学习用法 |
+| `npm run example:basic` | 基础示例 | 了解完整功能 |
 | `npm run help` | 查看帮助 | 查看所有命令 |
-| `python userinput.py` | Python 助手 | 喜欢 Python |
 
-## 📖 详细文档
+## 📖 极简API文档
 
-查看 [README.md](./README.md) 获取完整的英文文档。
+| 函数/方法 | 描述 | 用法 |
+|-----------|------|------|
+| `listen(id, callback)` | 监听数据变化 | `listen('user', data => console.log(data))` |
+| `unlisten(id)` | 停止监听 | `unlisten('user')` |
+| `createDataListener()` | 创建监听器实例 | `const listener = createDataListener()` |
+| `listener.unlistenAll()` | 停止所有监听 | `listener.unlistenAll()` |
+
+## � 设计理念
+
+这个库有两个层次：
+
+1. **极简API** - 只要两个方法，隐藏所有复杂性 ⭐**推荐**
+2. **完整API** - 提供完整控制能力
+
+99% 的场景下，您只需要：
+- `listen(id, callback)` - 监听数据
+- `unlisten(id)` - 停止监听
 
 ## 🎉 特性
 
-- ✅ **简单易用** - 一行代码即可开始
-- ✅ **多种适配器** - 支持 WebSocket、SSE、REST、Mock
-- ✅ **TypeScript** - 完整的类型支持
-- ✅ **零配置** - 自动检测连接类型
-- ✅ **交互式工具** - 多种辅助工具
-- ✅ **完整文档** - 详细的使用说明
+- ✅ **超简单** - 只需两个方法
+- ✅ **零配置** - 自动处理连接
+- ✅ **TypeScript** - 完整类型支持  
+- ✅ **轻量级** - 最小化API设计
+- ✅ **功能完整** - 保留所有底层能力
 
 ## 🚨 问题解决
 
 如果遇到问题：
 
-1. 确保 Node.js 版本 >= 16
-2. 运行 `npm run setup` 重新设置
-3. 查看 `npm run help` 获取帮助
-4. 使用 `python userinput.py` 诊断问题
+1. 运行 `npm run demo` 看演示
+2. 查看 `npm run help` 获取帮助
+3. 使用 `python userinput.py` 诊断问题
 
-## 📞 联系我们
+## 📞 更多
 
-- 📋 查看 Issues
-- 📖 阅读文档
-- 🔧 运行 `npm run help`
+- � 查看 [README.md](./README.md) 获取完整英文文档
+- 🔧 运行 `npm run help` 查看所有命令
+- 📋 查看 Issues 反馈问题
